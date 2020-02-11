@@ -6,5 +6,8 @@
 		"psr-4": {
 			"DbTool\\": "src/"
 		}
-    }
+    },
+	"require": {
+		"twig/twig": "^2.12"
+	}
 }
