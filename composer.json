@@ -1,6 +1,6 @@
 {
 	"name": "jjdoor/db-tool",
-	"version":"1.0.2",
+	"version":"1.0.3",
 	"description": "mysql瑞士军刀",
 	"autoload": {
 		"psr-4": {
