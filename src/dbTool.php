@@ -8,7 +8,7 @@ namespace DbTool;
  *           $formatDbFields->db_tb_freorder();
  */
 //echo "<pre>";
-//$formatDbFields = new FormatDbFields();
+//$formatDbFields = new DbTool();
 //清空表中的所有内容
 //$formatDbFields->truncate();
 #数据库表的列表
@@ -22,7 +22,6 @@ namespace DbTool;
 #输出数据库文档
 //$formatDbFields->createDbDocument();
 
-
 //可否加入字段校验，比如同样是id，但是有些是int，有些是smallint，这个也要注意，必须统一
 class DbTool
 {
@@ -34,23 +33,35 @@ class DbTool
     private $__dbUser;
     private $__dbPort;
     private $__mysqli;
+    private $_twig;
+    private $_render;
 
     function __construct()
     {
-//        $this->__dbHost = "localhost";
-//        $this->__dbName = "cr_db";
-//        $this->__dbUser = "csl";
-//        $this->__dbPwd  = "e4ce2d9a415511e798fbb70e84c710C";
-//        $this->__dbPort = "3357";
-
-
-        $this->__dbHost = "127.0.0.1";
-        $this->__dbName = "store";
-        $this->__dbUser = "root";
-        $this->__dbPwd = "";
-        $this->__mysqli = new  mysqli ($this->__dbHost, $this->__dbUser, $this->__dbPwd, $this->__dbName);
+        include_once "config.php";
+        $this->__dbHost = $config['dbHost'];
+        $this->__dbName = $config["dbName"];
+        $this->__dbUser = $config["dbUser"];
+        $this->__dbPwd = $config["dbPwd"];
+        $this->__mysqli = new  \mysqli($this->__dbHost, $this->__dbUser, $this->__dbPwd, $this->__dbName);
         $this->__mysqli->query('set names utf8');
 
+        include_once "../vendor/autoload.php";
+
+//        $loader = new \Twig_Loader_Array();
+        $loader = new \Twig_Loader_Filesystem('./templates');
+
+// 配置环境
+        $this->_twig = new \Twig_Environment($loader);
+
+// 将参数传入指定模板，渲染输出结果
+//        echo $twig->render('index', array('name' => 'Twig'));
+//        $list = [
+//            ['id'=>1],
+//            ['id'=>2],
+//            ['id'=>3],
+//        ];
+//        echo $twig->render('index.html', array('name' => 'Twig','list'=>$list));
     }
 
     //清空数据库内的所有数据
@@ -85,15 +96,15 @@ class DbTool
      */
     public function createDbDocument()
     {
-        unlink("{$this->__dbName}.md");
+        @unlink("{$this->__dbName}.md");
         header("Content-type:text/html;charset=utf-8");
         echo "开始生成文档....<br>";
-        $pdo = new PDO("mysql:host={$this->__dbHost};dbname={$this->__dbName}", "{$this->__dbUser}", "{$this->__dbPwd}");
+        $pdo = new \PDO("mysql:host={$this->__dbHost};dbname={$this->__dbName}", "{$this->__dbUser}", "{$this->__dbPwd}");
 
         //<editor-fold desc="获取表注释">
         $tables = call_user_func(function()use($pdo){
             $sql = "SELECT * FROM information_schema.TABLES WHERE table_schema = '{$this->__dbName}' ORDER BY table_name";
-            $PDOStatement = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            $PDOStatement = $pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
             $return = [];
             foreach($PDOStatement as $k => $v){
@@ -112,7 +123,7 @@ class DbTool
                     a.table_schema = '{$this->__dbName}' and b.TABLE_SCHEMA='store_sandbox' 
                     ORDER BY
                     a.table_name";
-            $PDOStatement = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            $PDOStatement = $pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
             $return = array_fill_keys(array_keys($tables),[]);
             foreach($PDOStatement as $k => $v){
@@ -148,24 +159,7 @@ class DbTool
         echo "文档生成结束<a href='{$this->__dbName}.md'>打开{$this->__dbName}文档</a>";
     }
 
-    function dump($var)
-    {
-        $this->__dump($var);
-    }
-
-    private function __dump($var, $debugType = 1)
-    {
-        echo "<pre>";
-        if ($debugType == 1) {
-            print_r($var);
-        } elseif ($debugType == 2) {
-            var_dump($var);
-        }
-
-    }
-
     #表字段统计
-
     function printParamList()
     {
         $totalFields = array();
@@ -185,14 +179,9 @@ class DbTool
             }
         }
 
-        asort($totalFields);
-//         ksort($totalFields);
-        echo '<hr style="height:1px;border:none;border-top:1px solid #555555;" />';
-        echo '<h3>total&nbsp;&nbsp;:&nbsp;&nbsp;' . count($totalFields['p']) . "&nbsp;&nbsp;字段</h3><br>";
-
-        foreach ($totalFields['p'] as $key => $value) {
-            echo $value . "&nbsp;&nbsp;" . trim($key, "`") . "&nbsp;--------&nbsp;" . $totalFields['t'][$key] . "<br>";
-        }
+        array_multisort($totalFields['p'],SORT_DESC,$totalFields['t']);
+        $this->_render['param_name'] = '表字段统计';
+        $this->_render['param_list'] = $totalFields;
     }
 
     function getFieldList($tableName)
@@ -211,18 +200,18 @@ class DbTool
     function printTableList()
     {
         $tableListArr = $this->getTableList();
-        echo "<h3>总共有：" . count($tableListArr) . "个表</h3><br>";
-        $i = 1;
-        foreach ($tableListArr as $k => $v) {
-            echo $i . "&nbsp;&nbsp;" . $v . "<br>";
-            $i++;
-        }
+        $this->_render['table_name'] = "总共有：" . count($tableListArr) . "个表";
+        $this->_render['table_list'] = $tableListArr;
+    }
+
+    function __destruct()
+    {
+        echo $this->_twig->render('index.html', $this->_render);
+
     }
 
     function printRecordsNumber()
     {
-        echo '<hr style="height:1px;border:none;border-top:1px solid #555555;" />';
-        echo '<h3>记录数如下&nbsp;&nbsp;:&nbsp;&nbsp;' . "" . "&nbsp;&nbsp;</h3><br>";
         $sql = "SHOW FULL TABLES FROM `" . $this->__dbName . "`";
 
         $queryObj = $this->__mysqli->query($sql);
@@ -241,32 +230,9 @@ class DbTool
             $array[$row['c']] = $v;
             $tableRecords[$v] = $row['c'];
         }
-        asort($tableRecords);
-        echo "<table border='1'>";
-        echo "<tr><th>序号</th><th>表名</th><th>表记录数</th></tr>";
-        $i = 1;
-        foreach ($tableRecords as $k => $v) {
-            echo "  <tr>";
-            echo "      <td>{$i}</td><td>{$k}</td><td>{$v}</td>";
-            echo "  </tr>";
-            $i++;
-        }
-        echo "</table>";
-        return $this->__tabelsArr;
-    }
-
-    function readFile()
-    {
-        $handle = @fopen("index.php", "r");
-        if ($handle) {
-            while (!feof($handle)) {
-                $buffer = fgets($handle, 4096);
-                $buffer = trim($buffer);
-                $this->__fileLineArr[$buffer] = $buffer;
-            }
-            fclose($handle);
-        }
-        return $this->__fileLineArr;
+        arsort($tableRecords);
+        $this->_render['table_record_number_title'] = "表记录数";
+        $this->_render['table_record_number_list'] = $tableRecords;
     }
 
     /* 对本次连接的数据库中所有表进行字段重排，按自增量ID再a-z进行排序 */

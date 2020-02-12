@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<!-- CSS goes in the document HEAD or added to your external stylesheet -->
+<style type="text/css">
+    table.hovertable {
+        font-family: verdana,arial,sans-serif;
+        font-size:11px;
+        color:#333333;
+        border-width: 1px;
+        border-color: #999999;
+        border-collapse: collapse;
+    }
+    table.hovertable th {
+        background-color:#c3dde0;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #a9c6c9;
+    }
+    table.hovertable tr {
+        background-color:#d4e3e5;
+    }
+    table.hovertable td {
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #a9c6c9;
+    }
+</style>
+
+<!-- Table goes in the document BODY -->
+
+{{table_record_number_title}}
+<table class="hovertable">
+    <tr>
+        <th>序号</th><th>表名</th><th>记录数</th>
+    </tr>
+    {% for key,item in table_record_number_list %}
+    <tr onmouseover="this.style.backgroundColor='#ffff66';" onmouseout="this.style.backgroundColor='#d4e3e5';">
+        <td>{{loop.index}}</td><td>{{key}}</td><td>{{item}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{{table_name}}
+<table class="hovertable">
+    <tr>
+        <th>序号</th><th>表名</th>
+    </tr>
+    {% for key,item in table_list %}
+    <tr onmouseover="this.style.backgroundColor='#ffff66';" onmouseout="this.style.backgroundColor='#d4e3e5';">
+        <td>{{loop.index}}</td><td>{{item}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{{param_name}}
+<table class="hovertable">
+    <tr>
+        <th>序号</th><th>使用频率</th><th>字段名</th><th>使用表</th>
+    </tr>
+    {% for key,item in param_list['p'] %}
+    <tr onmouseover="this.style.backgroundColor='#ffff66';" onmouseout="this.style.backgroundColor='#d4e3e5';">
+        <td>{{loop.index}}</td><td>{{item}}</td><td>{{key}}</td><td>{{param_list['t'][key]}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
