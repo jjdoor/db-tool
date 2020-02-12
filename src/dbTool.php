@@ -48,20 +48,8 @@ class DbTool
 
         include_once "../vendor/autoload.php";
 
-//        $loader = new \Twig_Loader_Array();
         $loader = new \Twig_Loader_Filesystem('./templates');
-
-// 配置环境
         $this->_twig = new \Twig_Environment($loader);
-
-// 将参数传入指定模板，渲染输出结果
-//        echo $twig->render('index', array('name' => 'Twig'));
-//        $list = [
-//            ['id'=>1],
-//            ['id'=>2],
-//            ['id'=>3],
-//        ];
-//        echo $twig->render('index.html', array('name' => 'Twig','list'=>$list));
     }
 
     //清空数据库内的所有数据
