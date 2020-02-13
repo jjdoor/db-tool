@@ -3,10 +3,7 @@
  * @desc: 将数据库中的表字段进行重新排序
  * @author: benjamin
  * @date: 2015年7月21日
- * @example：$formatDbFields = new FormatDbFields();
- *           $formatDbFields->db_tb_freorder();
  */
-//echo "<pre>";
 $formatDbFields = new DbTool();
 //清空表中的所有内容
 //$formatDbFields->truncate();

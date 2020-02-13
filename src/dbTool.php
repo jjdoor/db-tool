@@ -1,31 +1,5 @@
 <?php
 namespace DbTool;
-//看看这个到哪里了，是1.0.4还是1.0.5,再测试看看w再看看
-//看看这个到哪里了，是1.0.4还是1.0.5,再测试看看w再看看
-//看看这个到哪里了，是1.0.4还是1.0.5,再测试看看w再看看
-/**
- * @desc: 将数据库中的表字段进行重新排序
- * @author: benjamin
- * @date: 2015年7月21日
- * @example：$formatDbFields = new FormatDbFields();
- *           $formatDbFields->db_tb_freorder();
- */
-//echo "<pre>";
-//$formatDbFields = new DbTool();
-//清空表中的所有内容
-//$formatDbFields->truncate();
-#数据库表的列表
-//$tables = $formatDbFields->printTableList();
-#数据库表字段统计
-//$formatDbFields->printParamList();
-#数据库表记录数统计
-//$formatDbFields->printRecordsNumber();
-#数据库内表字段按照a-z重排，id不参与
-// $formatDbFields->db_tb_freorder();
-#输出数据库文档
-//$formatDbFields->createDbDocument();
-
-//可否加入字段校验，比如同样是id，但是有些是int，有些是smallint，这个也要注意，必须统一
 class DbTool
 {
     public $__tabelsArr;
@@ -278,5 +252,4 @@ class DbTool
         $this->__mysqli->query($sql);
     }
 }
-
 ?>
