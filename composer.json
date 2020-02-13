@@ -8,6 +8,7 @@
 		}
     },
 	"require": {
-		"twig/twig": "^2.12"
+		"twig/twig": "^2.12",
+		"greenlion/php-sql-parser": "^4.3"
 	}
 }
