@@ -1,7 +1,7 @@
 <?php
 $config = [
     'dbHost' => "127.0.0.1",
-    'dbName' => "store",
-    'dbUser' => "root",
-    'dbPwd' => "",
+    'dbName' => "w7",
+    'dbUser' => "benjamin",
+    'dbPwd' => "123456",
     ];

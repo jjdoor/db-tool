@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- CSS goes in the document HEAD or added to your external stylesheet -->
+<style type="text/css">
+    table.hovertable {
+        font-family: verdana,arial,sans-serif;
+        font-size:11px;
+        color:#333333;
+        border-width: 1px;
+        border-color: #999999;
+        border-collapse: collapse;
+    }
+    table.hovertable th {
+        background-color:#c3dde0;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #a9c6c9;
+    }
+    table.hovertable tr {
+        background-color:#d4e3e5;
+    }
+    table.hovertable td {
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #a9c6c9;
+    }
+</style>
+
+<!-- Table goes in the document BODY -->
+
+{{columns_total}}
+<table class="hovertable">
+    <tr>
+        <th>序号</th><th>字段名</th><th>字段注释</th><th>使用频率</th><th>所属表</th><th>类型</th><th>默认值</th><th>COLUMN_KEY</th><th>EXTRA</th>
+    </tr>
+    {% for key,item in list %}
+    <tr onmouseover="this.style.backgroundColor='#ffff66';" onmouseout="this.style.backgroundColor='#d4e3e5';">
+        <td>{{loop.index}}</td>
+        <td>{{item.COLUMN_NAME}}</td>
+        <td style="width:400px;word-wrap: break-word;word-break: normal;">{% autoescape false %}{{item.COLUMN_COMMENT}}{% endautoescape %}</td>
+        <td>{{item.count}}</td>
+        <td>{% autoescape false %}{{item.TABLE_NAME}}{% endautoescape %}</td>
+        <td>{% autoescape false %}{{item.COLUMN_TYPE}}{% endautoescape %}</td>
+        <td>{% autoescape false %}{{item.COLUMN_DEFAULT}}{% endautoescape %}</td>
+        <td>{% autoescape false %}{{item.COLUMN_KEY}}{% endautoescape %}</td>
+        <td>{% autoescape false %}{{item.EXTRA}}{% endautoescape %}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+
+</body>
+</html>
